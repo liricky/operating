@@ -33,7 +33,7 @@ int main() {
         //自动生成样例
         //优先数法
 //        for (int k = 0; k < 5; ++k) {
-//            p[k].pri = rand()%40;
+//            p[k].pri = rand()%4+1;
 //        }
         //简单轮转法
 //        for (int k = 0; k < 5; ++k) {
