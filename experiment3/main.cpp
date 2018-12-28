@@ -20,6 +20,7 @@ struct pageinfo {
     pageinfo *next = NULL;
     int firstappear;
     int status;
+    int time;
 };
 
 bool test1(int i, int temp) {
@@ -129,8 +130,9 @@ void opt() {
     cout << "虚存容量：32K" << endl;
     cout << "页面尺寸(1-8K)：" << flush;
     cin >> pagesize;
+    int sign = 32/pagesize;
     Print_Page(pagesize);
-    for (rmsize = 4; rmsize <= 32; rmsize = rmsize + 2) {
+    for (rmsize = 4; rmsize <= sign; rmsize = rmsize + 2) {
         int time = 0;
         cout << "实存容量(4-32页)：" << flush;
         cout << rmsize << endl;
@@ -188,14 +190,81 @@ void opt() {
     }
 }
 
+//void lfu() {
+//    int pagesize;
+//    int rmsize;
+//    cout << "虚存容量：32K" << endl;
+//    cout << "页面尺寸(1-8K)：" << flush;
+//    cin >> pagesize;
+//    int sign = 32/pagesize;
+//    Print_Page(pagesize);
+//    for (rmsize = 4; rmsize <= sign; rmsize = rmsize + 2) {
+//        int time = 0;
+//        cout << "实存容量(4-32页)：" << flush;
+//        cout << rmsize << endl;
+//        pageinfo exam[MAX_RMSIZE];
+//        for (int n = 0; n < rmsize; ++n) {
+//            exam[n].phynum = n;
+//        }
+//        int now_size = 0;
+//        pageinfo *head = &exam[0];
+//        pageinfo *temp = NULL;
+//        for (int i = 0; i < 256; ++i) {
+//            int flag = 0;
+//            temp = head;
+//            while (temp != NULL) {
+//                if (temp->pagenum == Pageno[i]) {
+//                    flag = 1;
+//                    break;
+//                } else {
+//                    temp = temp->next;
+//                }
+//            }
+//            if (flag == 1)
+//                continue;
+//            temp = head;
+//            if (now_size < rmsize) {
+//                exam[now_size].pagenum = Pageno[i];
+//                now_size++;
+//                time++;
+//                if (now_size != rmsize)
+//                    exam[now_size - 1].next = &exam[now_size];
+//            } else {
+//                while (temp != NULL) {
+//                    for (int k = i + 1; k < 256; ++k) {
+//                        if (Pageno[k] == temp->pagenum) {
+//                            temp->firstappear = k;
+//                            break;
+//                        }
+//                    }
+//                    temp = temp->next;
+//                }
+//                pageinfo *max = &exam[0];
+//                temp = head->next;
+//                while (temp != NULL) {
+//                    if (temp->firstappear > max->firstappear)
+//                        max = temp;
+//                    temp = temp->next;
+//                }
+//                max->pagenum = Pageno[i];
+//                time++;
+//            }
+//        }
+//        cout << "页面失效次数：" << time << endl;
+//        cout << "命中率=" << (1 - time / 256.0) << endl;
+//        cout << "------------------" << endl;
+//    }
+//}
+
 void nru() {
     int pagesize;
     int rmsize;
     cout << "虚存容量：32K" << endl;
     cout << "页面尺寸(1-8K)：" << flush;
     cin >> pagesize;
+    int sign = 32/pagesize;
     Print_Page(pagesize);
-    for (rmsize = 4; rmsize <= 32; rmsize = rmsize + 2) {
+    for (rmsize = 4; rmsize <= sign; rmsize = rmsize + 2) {
         int time = 0;
         cout << "实存容量(4-32页)：" << flush;
         cout << rmsize << endl;
@@ -258,51 +327,6 @@ void nru() {
         cout << "命中率=" << (1 - time / 256.0) << endl;
         cout << "------------------" << endl;
     }
-//
-//
-//            while (temp != NULL) {
-//                if (temp->pagenum == Pageno[i]) {
-//                    flag = 1;
-//                    break;
-//                } else {
-//                    temp = temp->next;
-//                }
-//            }
-//            if (flag == 1)
-//                continue;
-//            temp = head;
-//            if (now_size < rmsize) {
-//                exam[now_size].pagenum = Pageno[i];
-//                now_size++;
-//                time++;
-//                exam[now_size - 1].next = &exam[now_size];
-//                exam[now_size].next = &exam[0];
-//                exam[now_size].status = 1;
-//            } else {
-//                while (temp != NULL) {
-//                    for (int k = i + 1; k < 256; ++k) {
-//                        if (Pageno[k] == temp->pagenum) {
-//                            temp->firstappear = k;
-//                            break;
-//                        }
-//                    }
-//                    temp = temp->next;
-//                }
-//                pageinfo *max = &exam[0];
-//                temp = head->next;
-//                while (temp != NULL) {
-//                    if (temp->firstappear > max->firstappear)
-//                        max = temp;
-//                    temp = temp->next;
-//                }
-//                max->pagenum = Pageno[i];
-//                time++;
-//            }
-//        }
-//        cout << "页面失效次数：" << time << endl;
-//        cout << "命中率=" << (1 - time / 256.0) << endl;
-//        cout << "------------------" << endl;
-//    }
 }
 
 void lru() {
@@ -311,8 +335,9 @@ void lru() {
     cout << "虚存容量：32K" << endl;
     cout << "页面尺寸(1-8K)：" << flush;
     cin >> pagesize;
+    int sign = 32/pagesize;
     Print_Page(pagesize);
-    for (int rmsize = 4; rmsize <= 32; rmsize = rmsize + 2) {
+    for (int rmsize = 4; rmsize <= sign; rmsize = rmsize + 2) {
         int time = 0;
         cout << "实存容量(4-32页)：" << flush;
         cout << rmsize << endl;
@@ -362,8 +387,9 @@ void fifo() {
     cout << "虚存容量：32K" << endl;
     cout << "页面尺寸(1-8K)：" << flush;
     cin >> pagesize;
+    int sign = 32/pagesize;
     Print_Page(pagesize);
-    for (int rmsize = 4; rmsize <= 32; rmsize = rmsize + 2) {
+    for (int rmsize = 4; rmsize <= sign; rmsize = rmsize + 2) {
         int time = 0;
         cout << "实存容量(4-32页)：" << flush;
         cout << rmsize << endl;
