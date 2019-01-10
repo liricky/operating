@@ -30,6 +30,7 @@ struct AFD {
     int fileno;
     int protectcode_enter[3];
 //    int sign = -1;   //读操作为1，写操作为0，默认为-1;
+    UFD *link = NULL;
 };
 
 AFD afd[5];
@@ -194,9 +195,10 @@ void command(string name, int MFD_no) {
                                 cout << "NO ENOUGH AUTHORITY" << endl;
                             } else {
                                 afd[flag].file_name = file_name;
-                                afd[flag].protectcode_enter[0] = protectioncode_enter / 100;
-                                afd[flag].protectcode_enter[1] = (protectioncode_enter / 10) % 10;
-                                afd[flag].protectcode_enter[2] = protectioncode_enter % 10;
+                                afd[flag].protectcode_enter[0] = (protectioncode_enter / 100) && (temp->protectcode[0]);
+                                afd[flag].protectcode_enter[1] = ((protectioncode_enter / 10) % 10) && (temp->protectcode[1]);
+                                afd[flag].protectcode_enter[2] = (protectioncode_enter % 10) && (temp->protectcode[2]);
+                                afd[flag].link = temp;
                                 cout << "THIS FILE IS OPENED,ITS OPEN NUMBER IS          " << afd[flag].fileno + 1
                                      << endl;
                             }
@@ -242,56 +244,83 @@ void command(string name, int MFD_no) {
                 cout << "NO THIS FILE" << endl;
             }
         } else if (command == "READ") {
-            MFD *temp = &mfd[MFD_no];
-            string file_name;
-            cout << "ENTER READ FILE NAME" << flush;
-            cin >> file_name;
-            UFD *temp_ufd = temp->link;
-            int flag = 0;
-            while (temp_ufd) {
-                if (temp_ufd->filename == file_name) {
-                    flag = 1;
-                    if (temp_ufd->protectcode[1] == 1) {
-                        cout << filecontent[temp_ufd->address] << endl;
-                        break;
-                    } else {
-                        cout << "UNPERMITTED" << endl;
-                        break;
-                    }
+            int file_no;
+            cout << "ENTER READ FILE NO" << flush;
+            cin >> file_no;
+            if(AFD_openstatus[file_no - 1] == 0){
+                cout << "NO THIS FILE" << endl;
+            } else {
+                if (afd[file_no - 1].protectcode_enter[1] == 1) {
+                    cout << filecontent[afd[file_no - 1].link->address] << endl;
                 } else {
-                    temp_ufd = temp_ufd->next;
+                    cout << "UNPERMITTED" << endl;
                 }
             }
-            if (flag == 0) {
-                cout << "NO THIS FILE" << endl;
-            }
+//            MFD *temp = &mfd[MFD_no];
+//            string file_name;
+//            cout << "ENTER READ FILE NAME" << flush;
+//            cin >> file_name;
+//            UFD *temp_ufd = temp->link;
+//            int flag = 0;
+//            while (temp_ufd) {
+//                if (temp_ufd->filename == file_name) {
+//                    flag = 1;
+//                    if (temp_ufd->protectcode[1] == 1) {
+//                        cout << filecontent[temp_ufd->address] << endl;
+//                        break;
+//                    } else {
+//                        cout << "UNPERMITTED" << endl;
+//                        break;
+//                    }
+//                } else {
+//                    temp_ufd = temp_ufd->next;
+//                }
+//            }
+//            if (flag == 0) {
+//                cout << "NO THIS FILE" << endl;
+//            }
         } else if (command == "WRITE") {
-            MFD *temp = &mfd[MFD_no];
-            string file_name;
-            cout << "ENTER WRITE FILE NAME" << flush;
-            cin >> file_name;
-            UFD *temp_ufd = temp->link;
-            int flag = 0;
-            while (temp_ufd) {
-                if (temp_ufd->filename == file_name) {
-                    flag = 1;
-                    if (temp_ufd->protectcode[0] == 1) {
-                        string input;
-                        cout << "WRITE WHAT CONTENT TO THIS FILE?" << endl;
-                        cin >> input;
-                        filecontent[temp_ufd->address].append(input);
-                        break;
-                    } else {
-                        cout << "UNPERMITTED" << endl;
-                        break;
-                    }
+            int file_no;
+            cout << "ENTER WRITE FILE NO" << flush;
+            cin >> file_no;
+            if(AFD_openstatus[file_no - 1] == 0){
+                cout << "NO THIS FILE" << endl;
+            } else {
+                if (afd[file_no - 1].protectcode_enter[0] == 1) {
+                    string input;
+                    cout << "WRITE WHAT CONTENT TO THIS FILE?" << endl;
+                    cin >> input;
+                    filecontent[afd[file_no - 1].link->address].append(input);
                 } else {
-                    temp_ufd = temp_ufd->next;
+                    cout << "UNPERMITTED" << endl;
                 }
             }
-            if (flag == 0) {
-                cout << "NO THIS FILE" << endl;
-            }
+//            MFD *temp = &mfd[MFD_no];
+//            string file_name;
+//            cout << "ENTER WRITE FILE NAME" << flush;
+//            cin >> file_name;
+//            UFD *temp_ufd = temp->link;
+//            int flag = 0;
+//            while (temp_ufd) {
+//                if (temp_ufd->filename == file_name) {
+//                    flag = 1;
+//                    if (temp_ufd->protectcode[0] == 1) {
+//                        string input;
+//                        cout << "WRITE WHAT CONTENT TO THIS FILE?" << endl;
+//                        cin >> input;
+//                        filecontent[temp_ufd->address].append(input);
+//                        break;
+//                    } else {
+//                        cout << "UNPERMITTED" << endl;
+//                        break;
+//                    }
+//                } else {
+//                    temp_ufd = temp_ufd->next;
+//                }
+//            }
+//            if (flag == 0) {
+//                cout << "NO THIS FILE" << endl;
+//            }
         } else if (command == "OPEN") {
             MFD *temp = &mfd[MFD_no];
             string file_name;
@@ -331,6 +360,7 @@ void command(string name, int MFD_no) {
                             afd[sign].protectcode_enter[0] = protectioncode_enter / 100;
                             afd[sign].protectcode_enter[1] = (protectioncode_enter / 10) % 10;
                             afd[sign].protectcode_enter[2] = protectioncode_enter % 10;
+                            afd[flag].link = temp_ufd;
                             cout << "THIS FILE IS OPENED,ITS OPEN NUMBER IS          " << afd[sign].fileno + 1 << endl;
                         }
                         break;
