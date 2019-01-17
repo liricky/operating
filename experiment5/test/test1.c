@@ -1,0 +1,1 @@
+/home/ricky/class/operating/experiment5/prog1.c

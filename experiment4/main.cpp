@@ -86,7 +86,7 @@ void init() {
 }
 
 string input_username() {
-    cout << "YOUR NAME ?   " << flush;
+    cout << setw(50) << left << "YOUR NAME ?   " << flush;
     string name;
     cin >> name;
     return name;
@@ -144,7 +144,7 @@ void command(string name, int MFD_no) {
         while (command != "CREATE" && command != "DELETE" && command != "OPEN" && command != "CLOSE" &&
                command != "READ" &&
                command != "WRITE" && command != "BYE") {
-            cout << "COMMAND NAME? " << flush;
+            cout << setw(50) << left << "COMMAND NAME? " << flush;
             cin >> command;
             if (command != "CREATE" && command != "DELETE" && command != "OPEN" && command != "CLOSE" &&
                 command != "READ" &&
@@ -158,12 +158,12 @@ void command(string name, int MFD_no) {
                 UFD* temp = new UFD;
                 string file_name;
                 int protectioncode;
-                cout << setw(45) << left << "THE NEW FILE'S NAME(LESS THAN 9 CHARS)?" << flush;
+                cout << setw(50) << left << "THE NEW FILE'S NAME(LESS THAN 9 CHARS)?" << flush;
                 cin >> file_name;
-                cout << setw(45) << left << "THE NEW FILE’S PROTECTION CODE?" << flush;
+                temp->filename = file_name;
+                cout << setw(50) << left << "THE NEW FILE’S PROTECTION CODE?" << flush;
                 cin >> protectioncode;
                 cout << "THE NEW FILE IS CREATED." << endl;
-                temp->filename = file_name;
                 temp->protectcode[0] = protectioncode / 100;
                 temp->protectcode[1] = (protectioncode / 10) % 10;
                 temp->protectcode[2] = protectioncode % 10;
@@ -174,7 +174,7 @@ void command(string name, int MFD_no) {
                 user_filenum[MFD_no]++;
 //                cout << mfd[MFD_no].link->filename << endl;
                 if (temp->protectcode[2] == 1) {
-                    cout << "ENTER THE OPEN MODE? " << flush;
+                    cout << setw(50) << left << "ENTER THE OPEN MODE? " << flush;
                     int protectioncode_enter;
                     cin >> protectioncode_enter;
                     if (protectioncode_enter == 0 || protectioncode_enter == 1 || protectioncode_enter == 10 ||
@@ -199,7 +199,7 @@ void command(string name, int MFD_no) {
                                 afd[flag].protectcode_enter[1] = ((protectioncode_enter / 10) % 10) && (temp->protectcode[1]);
                                 afd[flag].protectcode_enter[2] = (protectioncode_enter % 10) && (temp->protectcode[2]);
                                 afd[flag].link = temp;
-                                cout << "THIS FILE IS OPENED,ITS OPEN NUMBER IS          " << afd[flag].fileno + 1
+                                cout << setw(50) << "THIS FILE IS OPENED,ITS OPEN NUMBER IS" << afd[flag].fileno + 1
                                      << endl;
                             }
                         }
@@ -214,26 +214,35 @@ void command(string name, int MFD_no) {
         } else if (command == "DELETE") {
             MFD *temp = &mfd[MFD_no];
             string file_name;
-            cout << "ENTER DELETE FILE NAME" << flush;
+            cout << setw(50) << left << "ENTER DELETE FILE NAME" << flush;
             cin >> file_name;
             UFD *temp_ufd = temp->link;
             UFD *prev_ufd;
             int sign = 0;
             int flag = 0;
+            int signal = 0;
             while (temp_ufd) {
                 if (temp_ufd->filename == file_name) {
                     sign = 1;
                     for (int i = 0; i < 5; ++i) {
-                        if (afd[i].file_name == file_name) {
-                            AFD_openstatus[i] = 0;
+                        if (AFD_openstatus[i] == 1 && afd[i].file_name == file_name) {
+                            cout << "THE FILE IS OPENED,CLOSE IT BEFORE DELETE IT!" << endl;
+                            signal = 1;
+                            break;
                         }
                     }
+                    if(signal == 1)
+                        break;
+                    user_filenum[MFD_no]--;
                     if (flag == 0) {
                         temp->link = temp_ufd->next;
+                        cout << "FILE " << file_name << " HAS BEEN DELETED!" << endl;
+                        break;
                     } else {
                         prev_ufd->next = temp_ufd->next;
+                        cout << "FILE " << file_name << " HAS BEEN DELETED!" << endl;
+                        break;
                     }
-                    user_filenum[MFD_no]--;
                 } else {
                     flag = 1;
                     prev_ufd = temp_ufd;
@@ -245,7 +254,7 @@ void command(string name, int MFD_no) {
             }
         } else if (command == "READ") {
             int file_no;
-            cout << "ENTER READ FILE NO" << flush;
+            cout << setw(50) << left << "ENTER READ FILE NO" << flush;
             cin >> file_no;
             if(AFD_openstatus[file_no - 1] == 0){
                 cout << "NO THIS FILE" << endl;
@@ -281,7 +290,7 @@ void command(string name, int MFD_no) {
 //            }
         } else if (command == "WRITE") {
             int file_no;
-            cout << "ENTER WRITE FILE NO" << flush;
+            cout << setw(50) << left << "ENTER WRITE FILE NO" << flush;
             cin >> file_no;
             if(AFD_openstatus[file_no - 1] == 0){
                 cout << "NO THIS FILE" << endl;
@@ -324,7 +333,7 @@ void command(string name, int MFD_no) {
         } else if (command == "OPEN") {
             MFD *temp = &mfd[MFD_no];
             string file_name;
-            cout << "ENTER OPEN FILE NAME" << flush;
+            cout << setw(50) << left << "ENTER OPEN FILE NAME" << flush;
             cin >> file_name;
             UFD *temp_ufd = temp->link;
             int flag = 0;
@@ -335,7 +344,7 @@ void command(string name, int MFD_no) {
                         int sign = -1;
                         int mark = 0;
                         for (int j = 0; j < 5; ++j) {
-                            if (afd[j].file_name == file_name) {
+                            if (AFD_openstatus[j] == 1 && afd[j].file_name == file_name) {
                                 cout << "FILE ALREADY OPENED" << endl;
                                 mark = 1;
                                 break;
@@ -343,7 +352,7 @@ void command(string name, int MFD_no) {
                         }
                         if (mark == 1)
                             break;
-                        cout << "ENTER OPEN MODE CODE" << flush;
+                        cout << setw(50) << left << "ENTER OPEN MODE CODE" << flush;
                         int protectioncode_enter;
                         cin >> protectioncode_enter;
                         for (int i = 0; i < 5; ++i) {
@@ -361,7 +370,7 @@ void command(string name, int MFD_no) {
                             afd[sign].protectcode_enter[1] = (protectioncode_enter / 10) % 10;
                             afd[sign].protectcode_enter[2] = protectioncode_enter % 10;
                             afd[flag].link = temp_ufd;
-                            cout << "THIS FILE IS OPENED,ITS OPEN NUMBER IS          " << afd[sign].fileno + 1 << endl;
+                            cout << setw(50) << left << "THIS FILE IS OPENED,ITS OPEN NUMBER IS" << afd[sign].fileno + 1 << endl;
                         }
                         break;
                     } else {
@@ -376,33 +385,14 @@ void command(string name, int MFD_no) {
                 cout << "NO THIS FILE" << endl;
             }
         } else if (command == "CLOSE") {
-            MFD *temp = &mfd[MFD_no];
-            string file_name;
-            cout << "ENTER CLOSE FILE NAME" << flush;
-            cin >> file_name;
-            UFD *temp_ufd = temp->link;
-            int flag = 0;
-            while (temp_ufd) {
-                if (temp_ufd->filename == file_name) {
-                    flag = 1;
-                    if (temp_ufd->protectcode[2] == 1) {
-                        for (int i = 0; i < 5; ++i) {
-                            if (afd->file_name == file_name) {
-                                AFD_openstatus[i] = 0;
-                                break;
-                            }
-                        }
-                        break;
-                    } else {
-                        cout << "UNPERMITTED" << endl;
-                        break;
-                    }
-                } else {
-                    temp_ufd = temp_ufd->next;
-                }
-            }
-            if (flag == 0) {
+            int file_no;
+            cout << setw(50) << left << "ENTER CLOSE FILE NO" << flush;
+            cin >> file_no;
+            if(AFD_openstatus[file_no - 1] == 0){
                 cout << "NO THIS FILE" << endl;
+            } else {
+                AFD_openstatus[file_no - 1] = 0;
+                cout << "FILE NO " << file_no << " HAS CLOSED!" << endl;
             }
         } else if (command == "BYE") {
             print_filedirectory(name);
