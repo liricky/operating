@@ -143,23 +143,24 @@ void command(string name, int MFD_no) {
         string command = "";
         while (command != "CREATE" && command != "DELETE" && command != "OPEN" && command != "CLOSE" &&
                command != "READ" &&
-               command != "WRITE" && command != "BYE") {
+               command != "WRITE" && command != "BYE" && command != "RENAME" && command != "CHANGECODE") {
             cout << setw(50) << left << "COMMAND NAME? " << flush;
             cin >> command;
             if (command != "CREATE" && command != "DELETE" && command != "OPEN" && command != "CLOSE" &&
                 command != "READ" &&
-                command != "WRITE" && command != "BYE") {
-                cout << "IT SHOULD BE ONE OF FOLLOWING : CREATE, DELETE, OPEN, CLOSE, READ, WRITE, BYE.TRY AGAIN!"
-                     << endl;
+                command != "WRITE" && command != "BYE" && command != "RENAME" && command != "CHANGECODE") {
+                cout
+                        << "IT SHOULD BE ONE OF FOLLOWING : CREATE, DELETE, OPEN, CLOSE, READ, WRITE, BYE, RENAME.TRY AGAIN!"
+                        << endl;
             }
         }
         if (command == "CREATE") {
             if (user_filenum[MFD_no] < 10) {
-                UFD* temp = new UFD;
+                UFD *temp = new UFD;
                 string file_name;
                 int protectioncode;
                 cout << setw(50) << left << "THE NEW FILE'S NAME(LESS THAN 9 CHARS)?" << flush;
-                cin >> file_name;
+                cin >> setw(9) >> file_name;
                 temp->filename = file_name;
                 cout << setw(50) << left << "THE NEW FILE’S PROTECTION CODE?" << flush;
                 cin >> protectioncode;
@@ -191,19 +192,22 @@ void command(string name, int MFD_no) {
                         if (flag == -1) {
                             cout << "CAN'T OPEN MORE FILES" << endl;
                         } else {
-                            if(protectioncode_enter / 100 > protectioncode / 100 || (protectioncode_enter/10)%10 > (protectioncode/10)%10 || protectioncode_enter % 10 > protectioncode % 10 ){
+                            if (protectioncode_enter / 100 > protectioncode / 100 ||
+                                (protectioncode_enter / 10) % 10 > (protectioncode / 10) % 10 ||
+                                protectioncode_enter % 10 > protectioncode % 10) {
                                 cout << "NO ENOUGH AUTHORITY" << endl;
                             } else {
                                 afd[flag].file_name = file_name;
                                 afd[flag].protectcode_enter[0] = (protectioncode_enter / 100) && (temp->protectcode[0]);
-                                afd[flag].protectcode_enter[1] = ((protectioncode_enter / 10) % 10) && (temp->protectcode[1]);
+                                afd[flag].protectcode_enter[1] =
+                                        ((protectioncode_enter / 10) % 10) && (temp->protectcode[1]);
                                 afd[flag].protectcode_enter[2] = (protectioncode_enter % 10) && (temp->protectcode[2]);
                                 afd[flag].link = temp;
                                 cout << setw(50) << "THIS FILE IS OPENED,ITS OPEN NUMBER IS" << afd[flag].fileno + 1
                                      << endl;
                             }
                         }
-                    } else{
+                    } else {
                         cout << "INVALID INPUT" << endl;
                         cout << "EXIT" << endl;
                     }
@@ -231,7 +235,7 @@ void command(string name, int MFD_no) {
                             break;
                         }
                     }
-                    if(signal == 1)
+                    if (signal == 1)
                         break;
                     user_filenum[MFD_no]--;
                     if (flag == 0) {
@@ -256,7 +260,7 @@ void command(string name, int MFD_no) {
             int file_no;
             cout << setw(50) << left << "ENTER READ FILE NO" << flush;
             cin >> file_no;
-            if(AFD_openstatus[file_no - 1] == 0){
+            if (AFD_openstatus[file_no - 1] == 0) {
                 cout << "NO THIS FILE" << endl;
             } else {
                 if (afd[file_no - 1].protectcode_enter[1] == 1) {
@@ -292,7 +296,7 @@ void command(string name, int MFD_no) {
             int file_no;
             cout << setw(50) << left << "ENTER WRITE FILE NO" << flush;
             cin >> file_no;
-            if(AFD_openstatus[file_no - 1] == 0){
+            if (AFD_openstatus[file_no - 1] == 0) {
                 cout << "NO THIS FILE" << endl;
             } else {
                 if (afd[file_no - 1].protectcode_enter[0] == 1) {
@@ -300,6 +304,7 @@ void command(string name, int MFD_no) {
                     cout << "WRITE WHAT CONTENT TO THIS FILE?" << endl;
                     cin >> input;
                     filecontent[afd[file_no - 1].link->address].append(input);
+                    afd[file_no - 1].link->length = filecontent[afd[file_no - 1].link->address].length();
                 } else {
                     cout << "UNPERMITTED" << endl;
                 }
@@ -370,7 +375,8 @@ void command(string name, int MFD_no) {
                             afd[sign].protectcode_enter[1] = (protectioncode_enter / 10) % 10;
                             afd[sign].protectcode_enter[2] = protectioncode_enter % 10;
                             afd[flag].link = temp_ufd;
-                            cout << setw(50) << left << "THIS FILE IS OPENED,ITS OPEN NUMBER IS" << afd[sign].fileno + 1 << endl;
+                            cout << setw(50) << left << "THIS FILE IS OPENED,ITS OPEN NUMBER IS" << afd[sign].fileno + 1
+                                 << endl;
                         }
                         break;
                     } else {
@@ -388,11 +394,47 @@ void command(string name, int MFD_no) {
             int file_no;
             cout << setw(50) << left << "ENTER CLOSE FILE NO" << flush;
             cin >> file_no;
-            if(AFD_openstatus[file_no - 1] == 0){
+            if (AFD_openstatus[file_no - 1] == 0) {
                 cout << "NO THIS FILE" << endl;
             } else {
                 AFD_openstatus[file_no - 1] = 0;
                 cout << "FILE NO " << file_no << " HAS CLOSED!" << endl;
+            }
+        } else if (command == "RENAME") {
+            int file_no;
+            cout << setw(50) << left << "ENTER RENAME FILE NO" << flush;
+            cin >> file_no;
+            if (AFD_openstatus[file_no - 1] == 0) {
+                cout << "NO THIS FILE" << endl;
+            } else {
+                if (afd[file_no - 1].protectcode_enter[2] == 1) {
+                    cout << setw(50) << left << "PLEASE INPUT NEW FILE NAME:" << flush;
+                    string newfilename;
+                    cin >> newfilename;
+                    afd[file_no - 1].link->filename = newfilename;
+                    cout << "FILE NAME HAS BEEN CHANGED!" << endl;
+                } else {
+                    cout << "UNPERMITTED" << endl;
+                }
+            }
+        } else if (command == "CHANGECODE") {
+            int file_no;
+            cout << setw(50) << left << "ENTER CHANGECODE FILE NO" << flush;
+            cin >> file_no;
+            if (AFD_openstatus[file_no - 1] == 0) {
+                cout << "NO THIS FILE" << endl;
+            } else {
+                if (afd[file_no - 1].protectcode_enter[2] == 1) {
+                    cout << setw(50) << left << "PLEASE INPUT NEW FILE CODE:" << flush;
+                    int newfilecode;
+                    cin >> newfilecode;
+                    afd[file_no - 1].link->protectcode[0] = newfilecode / 100;
+                    afd[file_no - 1].link->protectcode[1] = (newfilecode / 10) % 10;
+                    afd[file_no - 1].link->protectcode[2] = newfilecode % 10;
+                    cout << "FILE CODE HAS BEEN CHANGED!" << endl;
+                } else {
+                    cout << "UNPERMITTED" << endl;
+                }
             }
         } else if (command == "BYE") {
             print_filedirectory(name);

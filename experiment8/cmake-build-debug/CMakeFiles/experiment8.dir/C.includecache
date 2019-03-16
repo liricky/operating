@@ -1,0 +1,40 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/ricky/class/operating/experiment8/Get_comln.c
+Head.h
+/home/ricky/class/operating/experiment8/Head.h
+
+/home/ricky/class/operating/experiment8/Head.h
+unistd.h
+-
+stdlib.h
+-
+stdio.h
+-
+string.h
+-
+fcntl.h
+-
+errno.h
+-
+pwd.h
+-
+signal.h
+-
+sys/wait.h
+-
+sys/types.h
+-
+sys/stat.h
+-
+
+/home/ricky/class/operating/experiment8/Parsing.c
+Head.h
+/home/ricky/class/operating/experiment8/Head.h
+

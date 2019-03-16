@@ -1,0 +1,1 @@
+/usr/bin/cc -g   CMakeFiles/experiment8.dir/Main.c.o CMakeFiles/experiment8.dir/Get_pwd.c.o CMakeFiles/experiment8.dir/Get_comln.c.o CMakeFiles/experiment8.dir/Parsing.c.o CMakeFiles/experiment8.dir/Run_command.c.o  -o experiment8 
